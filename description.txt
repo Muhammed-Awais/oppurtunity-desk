@@ -1,0 +1,36 @@
+Opportunity Desk is a website designed to help students easily find and prepare for opportunities like jobs, scholarships, and tests.
+
+💡 What the Project Does
+🧑‍🎓 For Students (Users)
+
+Students can visit the website and:
+
+📢 View Jobs & Scholarships
+See the latest opportunities shared by the admin, including details and images.
+📚 Read & Download Notes
+Access study materials and preparation notes for different tests.
+🧠 Practice Tests (MCQs)
+Attempt quizzes to prepare for jobs, entry tests, and competitive exams.
+👨‍💼 For Admin
+
+The admin controls everything on the website through a dashboard:
+
+🔐 Login to Dashboard
+Only the admin can access the system.
+📝 Post Jobs & Scholarships
+Add new opportunities with:
+Title
+Description
+Optional image
+📂 Upload Notes
+Provide study materials for students.
+🧪 Create Tests
+Add MCQ-based tests for practice.
+🔄 Overall Working
+Admin adds content → website updates
+Students visit → see latest opportunities and prepare
+Everything is managed from one place
+🎯 Purpose of the Project
+Help students stay updated with opportunities
+Provide a central platform for preparation
+Make learning and applying easier and organized
