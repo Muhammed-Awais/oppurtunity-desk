@@ -62,7 +62,7 @@ export default function AdminLayout({
   }
 
   // Loading state
-  if (authenticated === null) {
+  if (loading) {
     return (
       <div className="min-h-[100dvh] flex items-center justify-center bg-zinc-50">
         <div className="h-8 w-8 rounded-full border-2 border-zinc-200 border-t-accent animate-spin" />
@@ -71,7 +71,7 @@ export default function AdminLayout({
   }
 
   // Not authenticated
-  if (!authenticated) {
+  if (!user && !isLoginPage) {
     return null;
   }
 

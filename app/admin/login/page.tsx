@@ -31,11 +31,12 @@ export default function AdminLoginPage() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       router.push("/admin");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Login error:", err);
-      if (err.code === "auth/user-not-found" || err.code === "auth/wrong-password" || err.code === "auth/invalid-credential") {
+      const error = err as { code?: string };
+      if (error.code === "auth/user-not-found" || error.code === "auth/wrong-password" || error.code === "auth/invalid-credential") {
         setError("Invalid email or password. Please check your credentials.");
-      } else if (err.code === "auth/too-many-requests") {
+      } else if (error.code === "auth/too-many-requests") {
         setError("Too many failed attempts. Please try again later.");
       } else {
         setError("An error occurred during login. Please try again.");
