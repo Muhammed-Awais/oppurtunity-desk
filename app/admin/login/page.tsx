@@ -6,6 +6,9 @@ import { motion } from "framer-motion";
 import { EnvelopeSimple, Lock, ArrowRight, Eye, EyeSlash } from "@phosphor-icons/react";
 import { cn } from "@/lib/cn";
 
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+
 export default function AdminLoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -25,21 +28,21 @@ export default function AdminLoginPage() {
 
     setLoading(true);
 
-    // Mock auth — accepts any valid-looking email + password with 4+ chars
-    await new Promise((r) => setTimeout(r, 800));
-
-    if (password.length < 4) {
-      setError("Invalid credentials. Please try again.");
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      router.push("/admin");
+    } catch (err: any) {
+      console.error("Login error:", err);
+      if (err.code === "auth/user-not-found" || err.code === "auth/wrong-password" || err.code === "auth/invalid-credential") {
+        setError("Invalid email or password. Please check your credentials.");
+      } else if (err.code === "auth/too-many-requests") {
+        setError("Too many failed attempts. Please try again later.");
+      } else {
+        setError("An error occurred during login. Please try again.");
+      }
+    } finally {
       setLoading(false);
-      return;
     }
-
-    // Store mock auth state
-    if (typeof window !== "undefined") {
-      localStorage.setItem("od-admin-auth", "true");
-    }
-
-    router.push("/admin");
   };
 
   return (

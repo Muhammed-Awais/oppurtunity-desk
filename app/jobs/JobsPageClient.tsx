@@ -1,13 +1,15 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import SectionHeading from "@/components/ui/SectionHeading";
 import OpportunityCard from "@/components/ui/OpportunityCard";
 import EmptyState from "@/components/ui/EmptyState";
 import StaggerReveal from "@/components/ui/StaggerReveal";
-import { opportunities } from "@/lib/data";
+import { Opportunity } from "@/lib/data";
+import { opportunityService } from "@/lib/services/opportunityService";
 import { cn } from "@/lib/cn";
 import { MagnifyingGlass, ArrowsDownUp, MapPin } from "@phosphor-icons/react";
+import SkeletonCard from "@/components/ui/SkeletonCard";
 
 const filters = ["All", "Jobs", "Scholarships"] as const;
 type Filter = (typeof filters)[number];
@@ -24,14 +26,30 @@ export default function JobsPageClient() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeSort, setActiveSort] = useState<SortOption>("newest");
   const [selectedLocation, setSelectedLocation] = useState("All");
+  const [realOpportunities, setRealOpportunities] = useState<Opportunity[]>([]);
+  const [fetching, setFetching] = useState(true);
 
-  const locations = useMemo(() => {
-    const locs = Array.from(new Set(opportunities.map((o) => o.location)));
-    return ["All", ...locs];
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const data = await opportunityService.getAll();
+        setRealOpportunities(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setFetching(false);
+      }
+    };
+    loadData();
   }, []);
 
+  const locations = useMemo(() => {
+    const locs = Array.from(new Set(realOpportunities.map((o) => o.location)));
+    return ["All", ...locs];
+  }, [realOpportunities]);
+
   const filteredAndSorted = useMemo(() => {
-    let result = [...opportunities];
+    let result = [...realOpportunities];
 
     // Filter by Type
     if (activeFilter !== "All") {
@@ -167,7 +185,13 @@ export default function JobsPageClient() {
         </StaggerReveal>
 
         <div className="mt-12">
-          {filteredAndSorted.length === 0 ? (
+          {fetching ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[...Array(6)].map((_, i) => (
+                <SkeletonCard key={i} />
+              ))}
+            </div>
+          ) : filteredAndSorted.length === 0 ? (
             <EmptyState
               title="No opportunities found"
               description="We couldn't find anything matching your search criteria. Try adjusting your filters or search terms."

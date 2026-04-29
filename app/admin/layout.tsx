@@ -21,6 +21,10 @@ const sidebarLinks = [
   { href: "/admin/post", label: "Post New", icon: PlusCircle },
 ];
 
+import { useAuth } from "@/context/AuthContext";
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+
 export default function AdminLayout({
   children,
 }: {
@@ -28,33 +32,28 @@ export default function AdminLayout({
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  const { user, loading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [authenticated, setAuthenticated] = useState<boolean | null>(null);
 
   // Skip layout for the login page
   const isLoginPage = pathname === "/admin/login";
 
   useEffect(() => {
-    if (isLoginPage) {
-      setAuthenticated(true);
-      return;
+    if (!loading && !user && !isLoginPage) {
+      router.push("/admin/login");
     }
-    if (typeof window !== "undefined") {
-      const auth = localStorage.getItem("od-admin-auth");
-      if (auth === "true") {
-        setAuthenticated(true);
-      } else {
-        setAuthenticated(false);
-        router.push("/admin/login");
-      }
+    if (!loading && user && isLoginPage) {
+      router.push("/admin");
     }
-  }, [isLoginPage, router]);
+  }, [user, loading, isLoginPage, router]);
 
-  const handleLogout = () => {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("od-admin-auth");
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      router.push("/admin/login");
+    } catch (error) {
+      console.error("Logout error:", error);
     }
-    router.push("/admin/login");
   };
 
   // Login page renders without admin chrome

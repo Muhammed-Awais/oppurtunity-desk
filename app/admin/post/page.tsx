@@ -17,6 +17,8 @@ const typeOptions = [
   { value: "scholarship", label: "Scholarship" },
 ];
 
+import { opportunityService } from "@/lib/services/opportunityService";
+
 export default function AdminPostPage() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -27,13 +29,33 @@ export default function AdminPostPage() {
   const [tags, setTags] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 1000));
-    setLoading(false);
-    setSubmitted(true);
+    setError("");
+
+    try {
+      const opportunityData = {
+        title,
+        description,
+        type: type as "job" | "scholarship",
+        location,
+        deadline,
+        organization,
+        tags: tags.split(",").map((t) => t.trim()).filter((t) => t !== ""),
+        image: "", // Placeholder for now
+      };
+
+      await opportunityService.add(opportunityData);
+      setSubmitted(true);
+    } catch (err) {
+      console.error("Error publishing opportunity:", err);
+      setError("Failed to publish opportunity. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleReset = () => {
@@ -241,6 +263,13 @@ export default function AdminPostPage() {
                 </div>
               </div>
             </div>
+
+            {/* Error */}
+            {error && (
+              <p className="text-sm text-rose-500 bg-rose-50 rounded-xl px-4 py-3 border border-rose-200/50">
+                {error}
+              </p>
+            )}
 
             {/* Submit */}
             <div className="pt-2">

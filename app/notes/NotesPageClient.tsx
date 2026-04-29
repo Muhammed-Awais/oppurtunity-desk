@@ -1,13 +1,15 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import SectionHeading from "@/components/ui/SectionHeading";
 import NoteCard from "@/components/ui/NoteCard";
 import EmptyState from "@/components/ui/EmptyState";
 import StaggerReveal from "@/components/ui/StaggerReveal";
-import { notes } from "@/lib/data";
+import { Note } from "@/lib/data";
+import { noteService } from "@/lib/services/noteService";
 import { cn } from "@/lib/cn";
 import { MagnifyingGlass, ArrowsDownUp, Book } from "@phosphor-icons/react";
+import SkeletonCard from "@/components/ui/SkeletonCard";
 
 const sortOptions = [
   { label: "Most Popular", value: "downloads" },
@@ -20,14 +22,30 @@ export default function NotesPageClient() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [activeSort, setActiveSort] = useState<SortOption>("downloads");
+  const [realNotes, setRealNotes] = useState<Note[]>([]);
+  const [fetching, setFetching] = useState(true);
 
-  const categories = useMemo(() => {
-    const cats = Array.from(new Set(notes.map((n) => n.category)));
-    return ["All", ...cats];
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const data = await noteService.getAll();
+        setRealNotes(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setFetching(false);
+      }
+    };
+    loadData();
   }, []);
 
+  const categories = useMemo(() => {
+    const cats = Array.from(new Set(realNotes.map((n) => n.category)));
+    return ["All", ...cats];
+  }, [realNotes]);
+
   const filteredAndSorted = useMemo(() => {
-    let result = [...notes];
+    let result = [...realNotes];
 
     // Filter by Category
     if (activeCategory !== "All") {
@@ -135,7 +153,13 @@ export default function NotesPageClient() {
         </StaggerReveal>
 
         <div className="mt-12">
-          {filteredAndSorted.length === 0 ? (
+          {fetching ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[...Array(4)].map((_, i) => (
+                <SkeletonCard key={i} />
+              ))}
+            </div>
+          ) : filteredAndSorted.length === 0 ? (
             <EmptyState
               title="No study material found"
               description="We couldn't find any notes matching your search or filter. Try a different search term."

@@ -23,6 +23,8 @@ export const metadata: Metadata = {
     "Discover scholarships, jobs, and competitive exam preparation resources for students across Pakistan. One platform, every opportunity.",
 };
 
+import { AuthProvider } from "@/context/AuthContext";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -37,9 +39,11 @@ export default function RootLayout({
         {/* Noise overlay — fixed, pointer-events-none */}
         <div className="noise-overlay" aria-hidden="true" />
 
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <AuthProvider>
+          <Navbar />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );

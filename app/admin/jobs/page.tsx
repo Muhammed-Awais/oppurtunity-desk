@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   PencilSimple,
@@ -10,13 +10,29 @@ import {
   MagnifyingGlass,
   X,
 } from "@phosphor-icons/react";
-import { opportunities as initialOpps, type Opportunity } from "@/lib/data";
+import { type Opportunity } from "@/lib/data";
+import { opportunityService } from "@/lib/services/opportunityService";
 import { cn } from "@/lib/cn";
 
 export default function AdminJobsPage() {
-  const [items, setItems] = useState<Opportunity[]>(initialOpps);
+  const [items, setItems] = useState<Opportunity[]>([]);
   const [search, setSearch] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const data = await opportunityService.getAll();
+        setItems(data);
+      } catch (err) {
+        console.error("Error loading opportunities:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, []);
 
   const filtered = search.trim()
     ? items.filter(
@@ -26,9 +42,14 @@ export default function AdminJobsPage() {
       )
     : items;
 
-  const handleDelete = (id: string) => {
-    setItems((prev) => prev.filter((item) => item.id !== id));
-    setDeleteTarget(null);
+  const handleDelete = async (id: string) => {
+    try {
+      await opportunityService.delete(id);
+      setItems((prev) => prev.filter((item) => item.id !== id));
+      setDeleteTarget(null);
+    } catch (err) {
+      console.error("Error deleting opportunity:", err);
+    }
   };
 
   return (
@@ -67,10 +88,15 @@ export default function AdminJobsPage() {
         transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] as const }}
       >
         <div className="card-core divide-y divide-zinc-100">
-          {filtered.length === 0 ? (
+          {loading ? (
+            <div className="p-12 flex flex-col items-center justify-center gap-3">
+              <div className="h-8 w-8 rounded-full border-2 border-zinc-200 border-t-accent animate-spin" />
+              <p className="text-sm text-zinc-400">Loading listings...</p>
+            </div>
+          ) : filtered.length === 0 ? (
             <div className="p-12 text-center">
               <p className="text-sm text-zinc-400">
-                No opportunities match your search.
+                No opportunities found.
               </p>
             </div>
           ) : (
