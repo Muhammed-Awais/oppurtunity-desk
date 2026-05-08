@@ -87,7 +87,7 @@ export default function JobsPageClient() {
     });
 
     return result;
-  }, [activeFilter, searchQuery, activeSort, selectedLocation]);
+  }, [activeFilter, searchQuery, activeSort, selectedLocation, realOpportunities]);
 
   return (
     <div className="pt-32 md:pt-40 pb-24 md:pb-32">

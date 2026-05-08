@@ -11,7 +11,7 @@ import {
   getDoc
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { Test } from "@/lib/data";
+import { Test, Question } from "@/lib/data";
 
 const COLLECTION_NAME = "tests";
 
@@ -41,6 +41,21 @@ export const testService = {
       })) as Test[];
     } catch (error) {
       console.error("Error getting tests:", error);
+      throw error;
+    }
+  },
+
+  // Read One
+  async getById(id: string) {
+    try {
+      const docRef = doc(db, COLLECTION_NAME, id);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        return { id: docSnap.id, ...docSnap.data() } as Test;
+      }
+      return null;
+    } catch (error) {
+      console.error("Error getting test:", error);
       throw error;
     }
   },

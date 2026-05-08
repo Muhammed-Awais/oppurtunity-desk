@@ -8,7 +8,6 @@ import {
   Tag,
   CheckCircle,
   ArrowRight,
-  UploadSimple,
 } from "@phosphor-icons/react";
 import { cn } from "@/lib/cn";
 
@@ -27,6 +26,7 @@ export default function AdminPostPage() {
   const [deadline, setDeadline] = useState("");
   const [organization, setOrganization] = useState("");
   const [tags, setTags] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -45,7 +45,7 @@ export default function AdminPostPage() {
         deadline,
         organization,
         tags: tags.split(",").map((t) => t.trim()).filter((t) => t !== ""),
-        image: "", // Placeholder for now
+        image: imageUrl.trim() || "",
       };
 
       await opportunityService.add(opportunityData);
@@ -66,6 +66,7 @@ export default function AdminPostPage() {
     setDeadline("");
     setOrganization("");
     setTags("");
+    setImageUrl("");
     setSubmitted(false);
   };
 
@@ -246,22 +247,22 @@ export default function AdminPostPage() {
               </p>
             </div>
 
-            {/* Image Upload */}
+            {/* Image URL */}
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-zinc-700">
-                Cover Image (optional)
+              <label htmlFor="post-image" className="block text-sm font-medium text-zinc-700">
+                Cover Image URL (optional)
               </label>
-              <div className="flex items-center justify-center w-full rounded-xl border-2 border-dashed border-zinc-200 bg-zinc-50 py-10 px-4 transition-all duration-300 hover:border-zinc-300 hover:bg-zinc-100/50 cursor-pointer">
-                <div className="text-center">
-                  <UploadSimple size={28} weight="regular" className="text-zinc-400 mx-auto mb-2" />
-                  <p className="text-sm text-zinc-500 font-medium">
-                    Click to upload or drag and drop
-                  </p>
-                  <p className="text-[11px] text-zinc-400 mt-1">
-                    PNG, JPG up to 5MB
-                  </p>
-                </div>
-              </div>
+              <input
+                id="post-image"
+                type="url"
+                value={imageUrl}
+                onChange={(e) => setImageUrl(e.target.value)}
+                placeholder="https://example.com/image.jpg"
+                className="w-full rounded-xl border border-zinc-200 bg-zinc-50 py-3 px-4 text-sm text-zinc-900 placeholder:text-zinc-400 transition-all duration-300 focus:border-accent focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/10"
+              />
+              <p className="text-[11px] text-zinc-400">
+                Paste a direct link to an image (PNG, JPG, WebP)
+              </p>
             </div>
 
             {/* Error */}

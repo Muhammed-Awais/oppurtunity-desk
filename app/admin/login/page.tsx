@@ -6,8 +6,9 @@ import { motion } from "framer-motion";
 import { EnvelopeSimple, Lock, ArrowRight, Eye, EyeSlash } from "@phosphor-icons/react";
 import { cn } from "@/lib/cn";
 
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import { ADMIN_EMAIL } from "@/context/AuthContext";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -29,7 +30,16 @@ export default function AdminLoginPage() {
     setLoading(true);
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const credential = await signInWithEmailAndPassword(auth, email, password);
+
+      // Restrict access to admin email only
+      if (credential.user.email !== ADMIN_EMAIL) {
+        await signOut(auth);
+        setError("Access denied. Only authorized administrators can log in.");
+        setLoading(false);
+        return;
+      }
+
       router.push("/admin");
     } catch (err: unknown) {
       console.error("Login error:", err);

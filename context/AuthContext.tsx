@@ -4,14 +4,18 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 
+export const ADMIN_EMAIL = "chawais1711@gmail.com";
+
 interface AuthContextType {
   user: User | null;
   loading: boolean;
+  isAdmin: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
+  isAdmin: false,
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -27,8 +31,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => unsubscribe();
   }, []);
 
+  const isAdmin = !!user && user.email === ADMIN_EMAIL;
+
   return (
-    <AuthContext.Provider value={{ user, loading }}>
+    <AuthContext.Provider value={{ user, loading, isAdmin }}>
       {!loading && children}
     </AuthContext.Provider>
   );

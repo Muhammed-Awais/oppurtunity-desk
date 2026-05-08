@@ -8,7 +8,7 @@ import {
   Briefcase,
   PlusCircle,
   BookOpen,
-  ClipboardText,
+  NotePencil,
   SignOut,
   List,
   X,
@@ -19,6 +19,8 @@ const sidebarLinks = [
   { href: "/admin", label: "Dashboard", icon: House },
   { href: "/admin/jobs", label: "Manage Jobs", icon: Briefcase },
   { href: "/admin/post", label: "Post New", icon: PlusCircle },
+  { href: "/admin/notes", label: "Share Notes", icon: BookOpen },
+  { href: "/admin/notes/create", label: "Create Note", icon: NotePencil },
 ];
 
 import { useAuth } from "@/context/AuthContext";
@@ -32,7 +34,7 @@ export default function AdminLayout({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { user, loading } = useAuth();
+  const { user, loading, isAdmin } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Skip layout for the login page
@@ -43,9 +45,15 @@ export default function AdminLayout({
       router.push("/admin/login");
     }
     if (!loading && user && isLoginPage) {
-      router.push("/admin");
+      if (isAdmin) {
+        router.push("/admin");
+      }
     }
-  }, [user, loading, isLoginPage, router]);
+    // If user is logged in but not admin, redirect to login
+    if (!loading && user && !isAdmin && !isLoginPage) {
+      router.push("/admin/login");
+    }
+  }, [user, loading, isLoginPage, isAdmin, router]);
 
   const handleLogout = async () => {
     try {
@@ -70,8 +78,8 @@ export default function AdminLayout({
     );
   }
 
-  // Not authenticated
-  if (!user && !isLoginPage) {
+  // Not authenticated or not admin
+  if (!user || !isAdmin) {
     return null;
   }
 

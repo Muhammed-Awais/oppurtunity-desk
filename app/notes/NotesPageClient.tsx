@@ -75,7 +75,7 @@ export default function NotesPageClient() {
     });
 
     return result;
-  }, [activeCategory, searchQuery, activeSort]);
+  }, [activeCategory, searchQuery, activeSort, realNotes]);
 
   return (
     <div className="pt-32 md:pt-40 pb-24 md:pb-32">

@@ -8,7 +8,8 @@ import {
   query, 
   orderBy, 
   serverTimestamp,
-  getDoc
+  getDoc,
+  increment
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Note } from "@/lib/data";
@@ -21,6 +22,7 @@ export const noteService = {
     try {
       const docRef = await addDoc(collection(db, COLLECTION_NAME), {
         ...data,
+        downloads: data.downloads || 0,
         createdAt: serverTimestamp(),
       });
       return docRef.id;
@@ -41,6 +43,32 @@ export const noteService = {
       })) as Note[];
     } catch (error) {
       console.error("Error getting notes:", error);
+      throw error;
+    }
+  },
+
+  // Read One
+  async getById(id: string) {
+    try {
+      const docRef = doc(db, COLLECTION_NAME, id);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        return { id: docSnap.id, ...docSnap.data() } as Note;
+      }
+      return null;
+    } catch (error) {
+      console.error("Error getting note:", error);
+      throw error;
+    }
+  },
+
+  // Increment download count
+  async incrementDownloads(id: string) {
+    try {
+      const docRef = doc(db, COLLECTION_NAME, id);
+      await updateDoc(docRef, { downloads: increment(1) });
+    } catch (error) {
+      console.error("Error incrementing downloads:", error);
       throw error;
     }
   },

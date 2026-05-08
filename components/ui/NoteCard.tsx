@@ -1,13 +1,38 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   FileText,
+  FilePdf,
+  ListChecks,
   DownloadSimple,
   ArrowUpRight,
+  BookOpenText,
 } from "@phosphor-icons/react";
 import type { Note } from "@/lib/data";
 import { cn } from "@/lib/cn";
+
+const typeConfig: Record<string, { icon: typeof FileText; color: string; badge: string; cta: string }> = {
+  text: {
+    icon: FileText,
+    color: "bg-blue-50 text-blue-600",
+    badge: "bg-blue-50 text-blue-700",
+    cta: "Read Note",
+  },
+  pdf: {
+    icon: FilePdf,
+    color: "bg-rose-50 text-rose-600",
+    badge: "bg-rose-50 text-rose-700",
+    cta: "View PDF",
+  },
+  mcq: {
+    icon: ListChecks,
+    color: "bg-violet-50 text-violet-600",
+    badge: "bg-violet-50 text-violet-700",
+    cta: "Attempt Quiz",
+  },
+};
 
 interface Props {
   note: Note;
@@ -16,6 +41,10 @@ interface Props {
 }
 
 export default function NoteCard({ note, index = 0, className }: Props) {
+  const noteType = note.type || "text";
+  const config = typeConfig[noteType] || typeConfig.text;
+  const TypeIcon = config.icon;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 28 }}
@@ -31,12 +60,17 @@ export default function NoteCard({ note, index = 0, className }: Props) {
       <div className="card-core p-6 md:p-8">
         {/* Top Row */}
         <div className="flex items-start justify-between gap-4 mb-5">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-accent flex-shrink-0">
-            <FileText size={24} weight="duotone" />
+          <div className={cn("flex h-12 w-12 items-center justify-center rounded-2xl flex-shrink-0", config.color)}>
+            <TypeIcon size={24} weight="duotone" />
           </div>
-          <span className="rounded-full bg-zinc-100 px-3 py-1 text-[10px] font-medium text-zinc-500 uppercase tracking-[0.12em]">
-            {note.category}
-          </span>
+          <div className="flex items-center gap-2">
+            <span className={cn("rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em]", config.badge)}>
+              {noteType}
+            </span>
+            <span className="rounded-full bg-zinc-100 px-3 py-1 text-[10px] font-medium text-zinc-500 uppercase tracking-[0.12em]">
+              {note.category}
+            </span>
+          </div>
         </div>
 
         {/* Content */}
@@ -47,10 +81,14 @@ export default function NoteCard({ note, index = 0, className }: Props) {
 
         {/* Stats */}
         <div className="flex items-center gap-5 mb-6 text-xs text-zinc-400">
-          <span className="font-mono">{note.pages} pages</span>
+          {noteType === "mcq" && note.questions ? (
+            <span className="font-mono">{note.questions.length} MCQs</span>
+          ) : (
+            <span className="font-mono">{note.pages} pages</span>
+          )}
           <span className="w-1 h-1 rounded-full bg-zinc-300" />
           <span className="font-mono">
-            {note.downloads.toLocaleString()} downloads
+            {(note.downloads || 0).toLocaleString()} downloads
           </span>
         </div>
 
@@ -59,12 +97,19 @@ export default function NoteCard({ note, index = 0, className }: Props) {
           <span className="text-[11px] text-zinc-400">
             Updated {note.updatedAt}
           </span>
-          <button className="group/btn flex items-center gap-2 rounded-full bg-zinc-900 pl-4 pr-1.5 py-1.5 text-xs font-medium text-white transition-all duration-300 hover:bg-accent active:scale-[0.97]">
-            Download
+          <Link
+            href={`/notes/${note.id}`}
+            className="group/btn flex items-center gap-2 rounded-full bg-zinc-900 pl-4 pr-1.5 py-1.5 text-xs font-medium text-white transition-all duration-300 hover:bg-accent active:scale-[0.97]"
+          >
+            {config.cta}
             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/10 transition-all duration-300 group-hover/btn:bg-white/20">
-              <DownloadSimple size={13} weight="bold" />
+              {noteType === "pdf" ? (
+                <DownloadSimple size={13} weight="bold" />
+              ) : (
+                <ArrowUpRight size={13} weight="bold" />
+              )}
             </span>
-          </button>
+          </Link>
         </div>
       </div>
     </motion.div>
