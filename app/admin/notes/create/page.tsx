@@ -111,14 +111,11 @@ export default function AdminCreateNotePage() {
 
     try {
       const now = new Date();
-      const noteData = {
+      const noteData: any = {
         title,
         subject,
         category,
         type,
-        content: type === "text" ? content : undefined,
-        pdfUrl: type === "pdf" ? pdfUrl : undefined,
-        questions: type === "mcq" ? questions : undefined,
         pages: type === "text" ? Math.max(1, Math.ceil(content.length / 3000)) : type === "mcq" ? questions.length : 0,
         downloads: 0,
         updatedAt: now.toLocaleDateString("en-US", {
@@ -127,6 +124,10 @@ export default function AdminCreateNotePage() {
           year: "numeric",
         }),
       };
+
+      if (type === "text") noteData.content = content;
+      if (type === "pdf") noteData.pdfUrl = pdfUrl;
+      if (type === "mcq") noteData.questions = questions;
 
       await noteService.add(noteData);
       setSubmitted(true);
