@@ -1,96 +1,87 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import TakeTestClient from "./TakeTestClient";
-import type { Test, Question } from "@/lib/data";
+import type { Metadata } from "next";
+import { SITE_URL, SITE_NAME, JsonLd, generateQuizSchema, generateBreadcrumbSchema } from "@/lib/seo";
 import { testService } from "@/lib/services/testService";
-import Link from "next/link";
-import { ArrowLeft } from "@phosphor-icons/react";
+import TestDetail from "./TestDetail";
 
-export default function TakeTestPage() {
-  const params = useParams();
-  const id = params.id as string;
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
 
-  const [test, setTest] = useState<Test | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  try {
+    const test = await testService.getById(id);
+    if (!test) {
+      return { title: "Test Not Found" };
+    }
 
-  useEffect(() => {
-    const loadTest = async () => {
-      try {
-        const data = await testService.getById(id);
-        if (data) {
-          setTest(data);
-        } else {
-          setError(true);
-        }
-      } catch (err) {
-        console.error("Error loading test:", err);
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
+    const title = `${test.title} — ${test.questionCount} MCQs | ${test.difficulty} Level`;
+    const description = `Take the ${test.title} practice test — ${test.questionCount} MCQs, ${test.duration}, ${test.difficulty} difficulty. Free online mock test for ${test.subject} preparation.`;
+
+    return {
+      title,
+      description,
+      keywords: [
+        test.title,
+        test.subject,
+        `${test.subject} MCQs`,
+        `${test.subject} mock test`,
+        "online MCQ test",
+        "practice test Pakistan",
+        "free mock test",
+      ],
+      alternates: {
+        canonical: `${SITE_URL}/tests/${id}`,
+      },
+      openGraph: {
+        title: `${title} | ${SITE_NAME}`,
+        description,
+        url: `${SITE_URL}/tests/${id}`,
+        type: "article",
+        siteName: SITE_NAME,
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+      },
     };
-    if (id) loadTest();
-  }, [id]);
-
-  if (loading) {
-    return (
-      <div className="pt-32 md:pt-40 pb-24 md:pb-32">
-        <div className="max-w-2xl mx-auto px-4 md:px-8 flex flex-col items-center gap-4">
-          <div className="h-8 w-8 rounded-full border-2 border-zinc-200 border-t-accent animate-spin" />
-          <p className="text-sm text-zinc-400">Loading test...</p>
-        </div>
-      </div>
-    );
+  } catch {
+    return { title: "Practice Test | Opportunity Desk" };
   }
+}
 
-  if (error || !test) {
-    return (
-      <div className="pt-32 md:pt-40 pb-24 md:pb-32">
-        <div className="max-w-[1400px] mx-auto px-4 md:px-8 text-center">
-          <h1 className="text-3xl font-semibold text-zinc-900 mb-4">
-            Test not found
-          </h1>
-          <p className="text-zinc-500 mb-8">
-            The test you are looking for does not exist.
-          </p>
-          <Link
-            href="/tests"
-            className="inline-flex items-center gap-2 rounded-full bg-zinc-900 px-6 py-3 text-sm font-medium text-white transition-all duration-300 hover:bg-accent active:scale-[0.97]"
-          >
-            <ArrowLeft size={15} weight="bold" />
-            Back to Tests
-          </Link>
-        </div>
-      </div>
-    );
-  }
+export default async function TakeTestPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
 
-  const questions: Question[] = test.questions || [];
+  let jsonLdData = null;
+  try {
+    const test = await testService.getById(id);
+    if (test) {
+      jsonLdData = test;
+    }
+  } catch {}
 
-  if (questions.length === 0) {
-    return (
-      <div className="pt-32 md:pt-40 pb-24 md:pb-32">
-        <div className="max-w-[1400px] mx-auto px-4 md:px-8 text-center">
-          <h1 className="text-3xl font-semibold text-zinc-900 mb-4">
-            {test.title}
-          </h1>
-          <p className="text-zinc-500 mb-8">
-            No questions have been added to this test yet. Check back later.
-          </p>
-          <Link
-            href="/tests"
-            className="inline-flex items-center gap-2 rounded-full bg-zinc-900 px-6 py-3 text-sm font-medium text-white transition-all duration-300 hover:bg-accent active:scale-[0.97]"
-          >
-            <ArrowLeft size={15} weight="bold" />
-            Back to Tests
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  return <TakeTestClient test={test} questions={questions} />;
+  return (
+    <>
+      {jsonLdData && (
+        <>
+          <JsonLd data={generateQuizSchema(jsonLdData)} />
+          <JsonLd
+            data={generateBreadcrumbSchema([
+              { name: "Home", url: "/" },
+              { name: "Practice Tests", url: "/tests" },
+              { name: jsonLdData.title, url: `/tests/${id}` },
+            ])}
+          />
+        </>
+      )}
+      <TestDetail />
+    </>
+  );
 }
