@@ -4,6 +4,8 @@ import { db } from "@/lib/firebase";
 
 const SITE_URL = "https://www.oppurtunitydesk.live";
 
+export const revalidate = 3600; // Revalidate every hour
+
 async function getCollectionIds(collectionName: string): Promise<string[]> {
   try {
     const snapshot = await getDocs(collection(db, collectionName));
