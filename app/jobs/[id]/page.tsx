@@ -1,27 +1,71 @@
-import { opportunityService } from "@/lib/services/opportunityService";
-import { notFound } from "next/navigation";
+"use client";
+
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, MapPin, Calendar, Briefcase, BuildingOffice } from "@phosphor-icons/react/dist/ssr";
-import { Metadata } from "next";
+import { motion } from "framer-motion";
+import { ArrowLeft, MapPin, Calendar, Briefcase, BuildingOffice } from "@phosphor-icons/react";
+import { opportunityService } from "@/lib/services/opportunityService";
+import type { Opportunity } from "@/lib/data";
 
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
-  const resolvedParams = await params;
-  const opportunity = await opportunityService.getById(resolvedParams.id);
-  if (!opportunity) {
-    return { title: "Opportunity Not Found" };
+export default function OpportunityDetailPage() {
+  const params = useParams();
+  const id = params.id as string;
+
+  const [opportunity, setOpportunity] = useState<Opportunity | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const data = await opportunityService.getById(id);
+        if (data) {
+          setOpportunity(data);
+        } else {
+          setError(true);
+        }
+      } catch (err) {
+        console.error("Error loading opportunity:", err);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (id) loadData();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="pt-32 md:pt-40 pb-24 md:pb-32 bg-zinc-50 min-h-screen">
+        <div className="max-w-[800px] mx-auto px-4 md:px-8 flex flex-col items-center gap-4">
+          <div className="h-8 w-8 rounded-full border-2 border-zinc-200 border-t-accent animate-spin" />
+          <p className="text-sm text-zinc-400">Loading opportunity...</p>
+        </div>
+      </div>
+    );
   }
-  return {
-    title: opportunity.title,
-    description: opportunity.description.slice(0, 160) + "...",
-  };
-}
 
-export default async function OpportunityDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const resolvedParams = await params;
-  const opportunity = await opportunityService.getById(resolvedParams.id);
-
-  if (!opportunity) {
-    notFound();
+  if (error || !opportunity) {
+    return (
+      <div className="pt-32 md:pt-40 pb-24 md:pb-32 bg-zinc-50 min-h-screen">
+        <div className="max-w-[800px] mx-auto px-4 md:px-8 text-center">
+          <h1 className="text-3xl font-semibold text-zinc-900 mb-4">
+            Opportunity not found
+          </h1>
+          <p className="text-zinc-500 mb-8">
+            The opportunity you are looking for does not exist.
+          </p>
+          <Link
+            href="/jobs"
+            className="inline-flex items-center gap-2 rounded-full bg-zinc-900 px-6 py-3 text-sm font-medium text-white transition-all duration-300 hover:bg-accent active:scale-[0.97]"
+          >
+            <ArrowLeft size={15} weight="bold" />
+            Back to Opportunities
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -35,7 +79,12 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
           Back to opportunities
         </Link>
 
-        <div className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-zinc-100">
+        <motion.div 
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] as const }}
+          className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-zinc-100"
+        >
           <div className="flex items-center gap-3 mb-6">
             <span className={`rounded-full px-3 py-1 text-xs uppercase tracking-wider font-bold ${
               opportunity.type === "scholarship"
@@ -77,7 +126,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
           </div>
 
           <div className="flex flex-wrap gap-2 mb-10">
-            {opportunity.tags.map((tag) => (
+            {opportunity.tags?.map((tag) => (
               <span
                 key={tag}
                 className="rounded-full bg-zinc-50 border border-zinc-100 px-4 py-1.5 text-sm font-medium text-zinc-500"
@@ -93,7 +142,7 @@ export default async function OpportunityDetailPage({ params }: { params: Promis
               Apply Now (External link)
             </button>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
