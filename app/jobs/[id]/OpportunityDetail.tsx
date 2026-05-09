@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowLeft, MapPin, Calendar, Briefcase, BuildingOffice } from "@phosphor-icons/react";
+import { ArrowLeft, MapPin, Calendar, Briefcase, BuildingOffice, WhatsappLogo } from "@phosphor-icons/react";
 import { opportunityService } from "@/lib/services/opportunityService";
 import type { Opportunity } from "@/lib/data";
 
@@ -136,11 +136,22 @@ export default function OpportunityDetail() {
             ))}
           </div>
 
-          <div className="pt-8 border-t border-zinc-100 text-center">
-            <p className="text-sm text-zinc-500 mb-4">To apply for this opportunity, please check the official organization website.</p>
-            <button className="rounded-full bg-accent hover:bg-emerald-600 text-white font-medium px-8 py-3.5 transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0">
-              Apply Now (External link)
-            </button>
+          <div className="pt-8 border-t border-zinc-100/50 text-center flex flex-col items-center">
+            <p className="text-base font-medium text-zinc-900 mb-2">
+              Follow Our WhatsApp Channel for Regular Updates
+            </p>
+            <p className="text-sm text-zinc-500 mb-6 max-w-md mx-auto">
+              Get the latest jobs, scholarships, and study materials delivered directly to your phone.
+            </p>
+            <a
+              href="https://whatsapp.com/channel/0029VbCBDvnGE56i6IhLQe3z"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-full bg-[#25D366] hover:bg-[#1DA851] text-white font-medium px-8 py-3.5 transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0"
+            >
+              <WhatsappLogo size={20} weight="fill" />
+              Join WhatsApp Channel
+            </a>
           </div>
         </motion.div>
       </div>
