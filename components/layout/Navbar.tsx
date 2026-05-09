@@ -66,18 +66,15 @@ export default function Navbar() {
           {/* Brand */}
           <Link
             href="/"
-            className="flex items-center pl-2 pr-4 md:pl-4 md:pr-6 overflow-hidden"
+            className="flex items-center pl-4 pr-6 py-1"
             onClick={() => setMobileOpen(false)}
           >
-            <div className="relative w-[110px] h-[40px] md:w-[130px] md:h-[48px] flex items-center">
-              <Image 
-                src="/logo.png" 
-                alt="Opportunity Desk Logo" 
-                fill
-                className="object-contain mix-blend-multiply scale-[1.6] origin-left"
-                priority
-              />
-            </div>
+            <span className="text-lg md:text-xl font-bold italic tracking-tight text-zinc-950">
+              Opportunity
+            </span>
+            <span className="text-lg md:text-xl font-bold italic tracking-tight text-accent ml-1">
+              Desk
+            </span>
           </Link>
 
           {/* Desktop Links */}
