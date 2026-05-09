@@ -14,6 +14,7 @@ import {
   House,
 } from "@phosphor-icons/react";
 import { cn } from "@/lib/cn";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 
 const navLinks = [
   { href: "/", label: "Home", icon: House },
@@ -111,35 +112,41 @@ export default function Navbar() {
             })}
           </div>
 
-          {/* Admin Link */}
-          <Link
-            href="/admin/login"
-            className="hidden md:flex items-center gap-2 rounded-full bg-zinc-900 px-5 py-2 text-sm font-medium text-white ml-2 transition-all duration-300 hover:bg-zinc-800 active:scale-[0.97]"
-          >
-            Admin
-          </Link>
+          {/* Theme Toggle & Admin Link */}
+          <div className="hidden md:flex items-center ml-2 border-l border-zinc-200/50 pl-2 gap-2">
+            <ThemeToggle />
+            <Link
+              href="/admin/login"
+              className="flex items-center gap-2 rounded-full bg-zinc-900 px-5 py-2 text-sm font-medium text-white transition-all duration-300 hover:bg-zinc-800 active:scale-[0.97]"
+            >
+              Admin
+            </Link>
+          </div>
 
-          {/* Mobile Hamburger */}
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden flex items-center justify-center w-10 h-10 rounded-full hover:bg-zinc-100 transition-fast ml-1"
-            aria-label="Toggle menu"
-          >
-            <div className="relative w-5 h-5">
-              <span
-                className={cn(
-                  "absolute left-0 top-[6px] w-5 h-[1.5px] bg-zinc-700 rounded-full transition-all duration-500",
-                  mobileOpen && "rotate-45 top-[10px]"
-                )}
-              />
-              <span
-                className={cn(
-                  "absolute left-0 bottom-[6px] w-5 h-[1.5px] bg-zinc-700 rounded-full transition-all duration-500",
-                  mobileOpen && "-rotate-45 bottom-[10px]"
-                )}
-              />
-            </div>
-          </button>
+          {/* Mobile Actions */}
+          <div className="md:hidden flex items-center ml-1 gap-1">
+            <ThemeToggle />
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-zinc-100 transition-fast"
+              aria-label="Toggle menu"
+            >
+              <div className="relative w-5 h-5">
+                <span
+                  className={cn(
+                    "absolute left-0 top-[6px] w-5 h-[1.5px] bg-zinc-700 rounded-full transition-all duration-500",
+                    mobileOpen && "rotate-45 top-[10px]"
+                  )}
+                />
+                <span
+                  className={cn(
+                    "absolute left-0 bottom-[6px] w-5 h-[1.5px] bg-zinc-700 rounded-full transition-all duration-500",
+                    mobileOpen && "-rotate-45 bottom-[10px]"
+                  )}
+                />
+              </div>
+            </button>
+          </div>
         </nav>
       </header>
 

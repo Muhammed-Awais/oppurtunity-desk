@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { AuthProvider } from "@/context/AuthContext";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import { JsonLd, generateWebSiteSchema, generateOrganizationSchema, SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/seo";
 import "./globals.css";
 
@@ -95,8 +96,9 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      suppressHydrationWarning
     >
-      <body className="min-h-[100dvh] flex flex-col">
+      <body className="min-h-[100dvh] flex flex-col transition-colors duration-500">
         {/* JSON-LD Structured Data — Site-wide */}
         <JsonLd data={generateWebSiteSchema()} />
         <JsonLd data={generateOrganizationSchema()} />
@@ -104,11 +106,13 @@ export default function RootLayout({
         {/* Noise overlay — fixed, pointer-events-none */}
         <div className="noise-overlay" aria-hidden="true" />
 
-        <AuthProvider>
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
-        </AuthProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <AuthProvider>
+            <Navbar />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
