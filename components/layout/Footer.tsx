@@ -41,7 +41,7 @@ export default function Footer() {
               </span>
               <span className="flex items-center gap-2">
                 <MapPin size={16} weight="regular" />
-                Islamabad, Pakistan
+                Faisalabad, Pakistan
               </span>
             </div>
           </div>
