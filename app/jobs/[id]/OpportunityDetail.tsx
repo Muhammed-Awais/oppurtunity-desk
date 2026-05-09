@@ -144,7 +144,7 @@ export default function OpportunityDetail() {
               Get the latest jobs, scholarships, and study materials delivered directly to your phone.
             </p>
             <a
-              href="https://whatsapp.com/channel/0029VbCBDvnGE56i6IhLQe3z"
+              href="https://whatsapp.com/channel/0029VbCBDvnGE56i6lhLQe3z"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-full bg-[#25D366] hover:bg-[#1DA851] text-white font-medium px-8 py-3.5 transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0"
