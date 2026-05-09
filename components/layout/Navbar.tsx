@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -65,15 +66,17 @@ export default function Navbar() {
           {/* Brand */}
           <Link
             href="/"
-            className="flex items-center gap-2 pl-4 pr-6"
+            className="flex items-center pl-2 pr-4 md:pl-4 md:pr-6"
             onClick={() => setMobileOpen(false)}
           >
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent text-white text-xs font-bold">
-              OD
-            </span>
-            <span className="text-sm font-semibold tracking-tight text-zinc-900 hidden sm:inline">
-              Opportunity Desk
-            </span>
+            <Image 
+              src="/logo.png" 
+              alt="Opportunity Desk Logo" 
+              width={120} 
+              height={48} 
+              className="h-10 md:h-12 w-auto object-contain"
+              priority
+            />
           </Link>
 
           {/* Desktop Links */}
