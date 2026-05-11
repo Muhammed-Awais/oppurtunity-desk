@@ -11,8 +11,14 @@ import { cn } from "@/lib/cn";
 import { MagnifyingGlass, ArrowsDownUp, MapPin } from "@phosphor-icons/react";
 import SkeletonCard from "@/components/ui/SkeletonCard";
 
-const filters = ["All", "Jobs", "Scholarships"] as const;
+const filters = ["All", "Jobs", "Scholarships", "Internships"] as const;
 type Filter = (typeof filters)[number];
+
+const filterToType: Record<Exclude<Filter, "All">, string> = {
+  Jobs: "job",
+  Scholarships: "scholarship",
+  Internships: "internship",
+};
 
 const sortOptions = [
   { label: "Newest First", value: "newest" },
@@ -54,7 +60,7 @@ export default function JobsPageClient() {
     // Filter by Type
     if (activeFilter !== "All") {
       result = result.filter(
-        (o) => o.type === activeFilter.toLowerCase().slice(0, -1)
+        (o) => o.type === filterToType[activeFilter as Exclude<Filter, "All">]
       );
     }
 

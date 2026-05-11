@@ -2,7 +2,7 @@ export interface Opportunity {
   id: string;
   title: string;
   organization: string;
-  type: "job" | "scholarship";
+  type: "job" | "scholarship" | "internship";
   description: string;
   deadline: string;
   location: string;

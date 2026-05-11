@@ -119,6 +119,8 @@ export default function AdminJobsPage() {
                         "w-1.5 h-12 rounded-full flex-shrink-0 mt-1",
                         item.type === "scholarship"
                           ? "bg-emerald-400"
+                          : item.type === "internship"
+                          ? "bg-violet-400"
                           : "bg-blue-400"
                       )}
                     />
@@ -139,6 +141,8 @@ export default function AdminJobsPage() {
                             "rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] flex-shrink-0",
                             item.type === "scholarship"
                               ? "bg-emerald-50 text-emerald-700"
+                              : item.type === "internship"
+                              ? "bg-violet-50 text-violet-700"
                               : "bg-blue-50 text-blue-700"
                           )}
                         >

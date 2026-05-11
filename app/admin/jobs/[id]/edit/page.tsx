@@ -15,6 +15,7 @@ import { opportunityService } from "@/lib/services/opportunityService";
 const typeOptions = [
   { value: "job", label: "Job" },
   { value: "scholarship", label: "Scholarship" },
+  { value: "internship", label: "Internship" },
 ];
 
 export default function AdminEditJobPage() {
@@ -71,7 +72,7 @@ export default function AdminEditJobPage() {
       const opportunityData = {
         title,
         description,
-        type: type as "job" | "scholarship",
+        type: type as "job" | "scholarship" | "internship",
         location,
         deadline,
         organization,
@@ -148,7 +149,7 @@ export default function AdminEditJobPage() {
           Edit Opportunity
         </h1>
         <p className="text-sm text-zinc-400">
-          Update the details of this job or scholarship.
+          Update the details of this job, scholarship, or internship.
         </p>
       </div>
 
