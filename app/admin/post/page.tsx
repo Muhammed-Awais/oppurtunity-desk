@@ -14,6 +14,7 @@ import { cn } from "@/lib/cn";
 const typeOptions = [
   { value: "job", label: "Job" },
   { value: "scholarship", label: "Scholarship" },
+  { value: "internship", label: "Internship" },
 ];
 
 import { opportunityService } from "@/lib/services/opportunityService";
@@ -40,7 +41,7 @@ export default function AdminPostPage() {
       const opportunityData = {
         title,
         description,
-        type: type as "job" | "scholarship",
+        type: type as "job" | "scholarship" | "internship",
         location,
         deadline,
         organization,
@@ -115,7 +116,7 @@ export default function AdminPostPage() {
           Post Opportunity
         </h1>
         <p className="text-sm text-zinc-400">
-          Create a new job or scholarship listing for students.
+          Create a new job, scholarship, or internship listing for students.
         </p>
       </div>
 
