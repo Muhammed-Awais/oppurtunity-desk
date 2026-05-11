@@ -13,6 +13,7 @@ import {
 import { type Opportunity } from "@/lib/data";
 import { opportunityService } from "@/lib/services/opportunityService";
 import { cn } from "@/lib/cn";
+import Link from "next/link";
 
 export default function AdminJobsPage() {
   const [items, setItems] = useState<Opportunity[]>([]);
@@ -159,12 +160,13 @@ export default function AdminJobsPage() {
 
                     {/* Actions */}
                     <div className="flex items-center gap-1 flex-shrink-0">
-                      <button
+                      <Link
+                        href={`/admin/jobs/${item.id}/edit`}
                         className="flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600 transition-all duration-300 active:scale-[0.93]"
                         aria-label={`Edit ${item.title}`}
                       >
                         <PencilSimple size={16} weight="regular" />
-                      </button>
+                      </Link>
                       <button
                         onClick={() => setDeleteTarget(item.id)}
                         className="flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:bg-rose-50 hover:text-rose-500 transition-all duration-300 active:scale-[0.93]"
