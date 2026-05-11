@@ -83,8 +83,20 @@ export default function OpportunityDetail() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] as const }}
-          className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-zinc-100"
+          className="bg-white rounded-3xl shadow-sm border border-zinc-100 overflow-hidden"
         >
+          {/* Cover Image */}
+          {opportunity.image && (
+            <div className="relative w-full aspect-[2/1] bg-zinc-100">
+              <img
+                src={opportunity.image}
+                alt={opportunity.title}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
+
+          <div className="p-8 md:p-12">
           <div className="flex items-center gap-3 mb-6">
             <span className={`rounded-full px-3 py-1 text-xs uppercase tracking-wider font-bold ${
               opportunity.type === "scholarship"
@@ -152,6 +164,7 @@ export default function OpportunityDetail() {
               <WhatsappLogo size={20} weight="fill" />
               Join WhatsApp Channel
             </a>
+          </div>
           </div>
         </motion.div>
       </div>

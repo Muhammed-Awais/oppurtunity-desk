@@ -35,6 +35,16 @@ export default function OpportunityCard({
     >
       <Link href={`/jobs/${opportunity.id}`} className="block h-full">
         <div className="card-core flex flex-col h-full hover:shadow-lg transition-shadow duration-300">
+          {/* Cover Image */}
+          {opportunity.image && (
+            <div className="relative w-full aspect-[16/9] overflow-hidden rounded-t-2xl bg-zinc-100">
+              <img
+                src={opportunity.image}
+                alt={opportunity.title}
+                className="w-full h-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-105"
+              />
+            </div>
+          )}
           {/* Content */}
           <div className="p-6 md:p-8 flex flex-col h-full">
             {/* Header with Type Badge */}
