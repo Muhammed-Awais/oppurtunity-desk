@@ -87,11 +87,11 @@ export default function OpportunityDetail() {
         >
           {/* Cover Image */}
           {opportunity.image && (
-            <div className="relative w-full aspect-[2/1] bg-zinc-100">
+            <div className="relative w-full bg-zinc-100/50 border-b border-zinc-100 flex justify-center p-4 md:p-8">
               <img
                 src={opportunity.image}
                 alt={opportunity.title}
-                className="w-full h-full object-cover"
+                className="w-full max-h-[500px] object-contain rounded-xl"
               />
             </div>
           )}
