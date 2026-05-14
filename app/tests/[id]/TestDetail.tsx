@@ -8,32 +8,34 @@ import { testService } from "@/lib/services/testService";
 import Link from "next/link";
 import { ArrowLeft } from "@phosphor-icons/react";
 
-export default function TestDetail() {
+export default function TestDetail({ initialData }: { initialData?: Test | null }) {
   const params = useParams();
   const id = params.id as string;
 
-  const [test, setTest] = useState<Test | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [test, setTest] = useState<Test | null>(initialData || null);
+  const [loading, setLoading] = useState(!initialData);
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    const loadTest = async () => {
-      try {
-        const data = await testService.getById(id);
-        if (data) {
-          setTest(data);
-        } else {
+    if (!initialData && id) {
+      const loadTest = async () => {
+        try {
+          const data = await testService.getById(id);
+          if (data) {
+            setTest(data);
+          } else {
+            setError(true);
+          }
+        } catch (err) {
+          console.error("Error loading test:", err);
           setError(true);
+        } finally {
+          setLoading(false);
         }
-      } catch (err) {
-        console.error("Error loading test:", err);
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-    if (id) loadTest();
-  }, [id]);
+      };
+      loadTest();
+    }
+  }, [id, initialData]);
 
   if (loading) {
     return (

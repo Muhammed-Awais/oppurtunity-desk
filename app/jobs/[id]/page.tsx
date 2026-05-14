@@ -81,7 +81,7 @@ export default async function OpportunityDetailPage({
           />
         </>
       )}
-      <OpportunityDetail />
+      <OpportunityDetail initialData={jsonLdData} />
     </>
   );
 }

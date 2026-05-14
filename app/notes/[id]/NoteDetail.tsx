@@ -21,32 +21,34 @@ import { noteService } from "@/lib/services/noteService";
 import type { Note, Question } from "@/lib/data";
 import { cn } from "@/lib/cn";
 
-export default function NoteDetail() {
+export default function NoteDetail({ initialData }: { initialData?: Note | null }) {
   const params = useParams();
   const id = params.id as string;
 
-  const [note, setNote] = useState<Note | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [note, setNote] = useState<Note | null>(initialData || null);
+  const [loading, setLoading] = useState(!initialData);
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    const loadNote = async () => {
-      try {
-        const data = await noteService.getById(id);
-        if (data) {
-          setNote(data);
-        } else {
+    if (!initialData && id) {
+      const loadNote = async () => {
+        try {
+          const data = await noteService.getById(id);
+          if (data) {
+            setNote(data);
+          } else {
+            setError(true);
+          }
+        } catch (err) {
+          console.error("Error loading note:", err);
           setError(true);
+        } finally {
+          setLoading(false);
         }
-      } catch (err) {
-        console.error("Error loading note:", err);
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-    if (id) loadNote();
-  }, [id]);
+      };
+      loadNote();
+    }
+  }, [id, initialData]);
 
   if (loading) {
     return (

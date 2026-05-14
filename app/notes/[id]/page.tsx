@@ -85,7 +85,7 @@ export default async function NoteDetailPage({
           />
         </>
       )}
-      <NoteDetail />
+      <NoteDetail initialData={jsonLdData} />
     </>
   );
 }

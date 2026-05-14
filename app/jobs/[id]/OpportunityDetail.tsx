@@ -8,32 +8,35 @@ import { ArrowLeft, MapPin, Calendar, Briefcase, BuildingOffice, WhatsappLogo } 
 import { opportunityService } from "@/lib/services/opportunityService";
 import type { Opportunity } from "@/lib/data";
 
-export default function OpportunityDetail() {
+export default function OpportunityDetail({ initialData }: { initialData?: Opportunity | null }) {
   const params = useParams();
   const id = params.id as string;
 
-  const [opportunity, setOpportunity] = useState<Opportunity | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [opportunity, setOpportunity] = useState<Opportunity | null>(initialData || null);
+  const [loading, setLoading] = useState(!initialData);
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const data = await opportunityService.getById(id);
-        if (data) {
-          setOpportunity(data);
-        } else {
+    // Only fetch if initialData wasn't provided
+    if (!initialData && id) {
+      const loadData = async () => {
+        try {
+          const data = await opportunityService.getById(id);
+          if (data) {
+            setOpportunity(data);
+          } else {
+            setError(true);
+          }
+        } catch (err) {
+          console.error("Error loading opportunity:", err);
           setError(true);
+        } finally {
+          setLoading(false);
         }
-      } catch (err) {
-        console.error("Error loading opportunity:", err);
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-    if (id) loadData();
-  }, [id]);
+      };
+      loadData();
+    }
+  }, [id, initialData]);
 
   if (loading) {
     return (

@@ -81,7 +81,7 @@ export default async function TakeTestPage({
           />
         </>
       )}
-      <TestDetail />
+      <TestDetail initialData={jsonLdData} />
     </>
   );
 }
